@@ -13,10 +13,10 @@ void UnpackRom(string romPath, string arm9) {
     system(command.c_str());
     
     //Updating some of the files...
-    command = "cp " + arm9 + " temp\\arm9.bin";
+    command = "copy " + arm9 + " temp\\arm9.bin";
     system(command.c_str());
     
-    command = "cp files\\scr_seq.narc data\\a\\0\\1\\2";
+    command = "copy files\\scr_seq.narc data\\a\\0\\1\\2";
     system(command.c_str());
     
 }
@@ -28,7 +28,7 @@ void UnpackFieldNarc() {
     //Updating some select files:
     for(const auto & file : directory_iterator(EVENT_DATA)) {
         string pstr = file.path().string();
-        command = "cp " + file.path().string();
+        command = "copy " + file.path().string();
         pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length());
         command += " temp\\event_data\\" + pstr;
         system(command.c_str());

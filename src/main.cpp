@@ -8,8 +8,11 @@ using namespace std;
 using std::filesystem::directory_iterator;
 using std::filesystem::recursive_directory_iterator;
 
+static bool flag = false;
+
 static void HandleRandomization(string directory, string data, string arm9) {
     for(const auto & file : recursive_directory_iterator(directory)) {
+        flag = true;
         string pstr = file.path().string();
         UnpackRom(pstr, arm9);
         UnpackFieldNarc();
@@ -37,4 +40,8 @@ int main() {
     HandleRandomization(SS_PATH, SS_DATA, SS_ARM9);
     //Heart Gold
     HandleRandomization(HG_PATH, HG_DATA, HG_ARM9);
+    if(!flag) {
+        cout << "No rom detected, please refer to HowToUse.txt" << endl;
+    }
+    system("pause");
 }
