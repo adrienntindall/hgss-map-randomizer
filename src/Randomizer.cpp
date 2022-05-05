@@ -585,7 +585,7 @@ void GenerateLogFile(string path) {
         if(sWarpList[c].newWarp != nullptr) {
             log << sWarpList[c].warpID;
             log << " <-> ";
-            log << sWarpList[c].newWarp->warpID;
+            log << sWarpList[c].newWarp->original->warpID;
             log << endl;
         }
     }
