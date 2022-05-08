@@ -40,6 +40,12 @@ typedef struct FlagAlias {
 } FLAG_ALIAS;
 static vector<FLAG_ALIAS> sOtherFlags;
 static vector<string> sMainFlags;
+typedef struct Firsts {
+    BLOCK* block;
+    WARP* first;
+} FIRST;
+static vector<FIRST> sFirstList;
+static WARP* GetFirst(BLOCK* block);
 
 void UpdateFiles() {
     for(const auto & file : directory_iterator(REPLACE_FILES_PATH)) {
@@ -120,6 +126,7 @@ void GetBlocks(string blockPath) {
             while(getline(block, line)) {
                 WARP* ptr = GetWarpByID(line);
                 if(ptr != nullptr) {
+                    ptr->block = nullptr;
                     sGarbageRooms.push_back(ptr);
                     sUnusedWarps.push_back(ptr);
                 }
@@ -129,6 +136,7 @@ void GetBlocks(string blockPath) {
             while(getline(block, line)) {
                 WARP* ptr = GetWarpByID(line);
                 if(ptr != nullptr) {
+                    ptr->block = nullptr;
                     sRequiredDeadEnds.push_back(ptr);
                     sUnusedWarps.push_back(ptr);
                 }
@@ -282,12 +290,8 @@ void SwapConnections(WARP* A, WARP* B) {
 
 void InsertWarps(WARP* A, WARP* B, WARP* insertionPoint) {
     WARP* warp2 = insertionPoint->newWarp->original;
-    //cout << "Inserting: " << A->warpID << " and " << B->warpID << " at warp " << insertionPoint->warpID << "/" << warp2->warpID << endl;
     ConnectWarps(A, insertionPoint);
     ConnectWarps(B, warp2);
-    //cout << "Inserted: " << A->warpID << " and " << B->warpID << " at warp " << insertionPoint->warpID << "/" << warp2->warpID << endl;
-    //cout << "New Insertion Point Warps: " << insertionPoint->newWarp->warpID << " and " << warp2->newWarp->warpID << endl;
-    //cout << "New warps from block: " << A->newWarp->warpID << " and " << B->newWarp->warpID << endl;
 }
 
 inline int readWord(vector<unsigned char> binData, int c) {
@@ -353,14 +357,14 @@ void SetWarps() {
 }
 
 bool RandomizeMap() {
-    cout << "Starting Ranomization!" << endl;
+    cout << "Starting Randomization!" << endl;
     auto rd = random_device {}; 
     auto rng = default_random_engine { rd() };
     shuffle(begin(sUnusedWarps), end(sUnusedWarps), rng);
     
     while(!needsConnections.empty()) {
         shuffle(begin(needsConnections), end(needsConnections), rng);
-        //cout << needsConnections.size() << " " << sUnusedWarps.size() << " " << sUsedWarps.size() << endl;
+
         WARP* warp = sUnusedWarps.back();
         WARP* neededWarp = needsConnections.back();
         ConnectWarps(warp, neededWarp);
@@ -400,12 +404,23 @@ bool RandomizeMap() {
             BLOCK* blk = sUnusedBlocks.back();
             shuffle(begin(*blk), end(*blk), rng);
             InsertWarps((*blk)[0], (*blk)[1], sUsedWarps.back());
+            if(sUsedWarps.back()->block == nullptr) {
+                FIRST f = { blk, (*blk)[0] };
+                sFirstList.push_back(f);
+            }
+            else if(sUsedWarps.back() == GetFirst(sUsedWarps.back()->block)){
+                FIRST f = { blk, (*blk)[1] };
+                sFirstList.push_back(f);
+            }
+            else {
+                FIRST f = { blk, (*blk)[0] };
+                sFirstList.push_back(f);
+            }
             sUsedWarps.push_back((*blk)[0]);
             sUsedWarps.push_back((*blk)[1]);
             for(int c = 2; c < blk->size(); c++) {
                 needsConnections.push_back((*blk)[c]);
             }
-            
             sUnusedBlocks.pop_back();
         }    
     }
@@ -433,7 +448,6 @@ bool RandomizeMap() {
                 for(int w = 0; w < sOtherFlags[c].checks.size(); w++) {
                     check = check && CheckPath(startingPoint, sOtherFlags[c].checks[w], sOtherFlags[c].equiv);
                     if(!check) {
-                       //cout << endl;
                        break;
                     }
                 }
@@ -459,17 +473,19 @@ bool RandomizeMap() {
                        break;
                    }
                    else {
-                       SwapConnections(sGarbageRooms[c], sProgression.back().warp);
+                        if (sProgression.back().warp->block == nullptr) {
+                            SwapConnections(sGarbageRooms[c], sProgression.back().warp);
+                        } 
+                        else {
+                            SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
+                        }
                    }
                }
            }
            if(c == sGarbageRooms.size()) {
-               //cout << "(Randomization failed) WARNING: No legitimate path to " << sProgression.back().warp->warpID << endl;
                return false;
            }
-           //else cout << endl;
         }
-        //else cout << endl;
         sProgression.pop_back();
     }
     cout << "Randomized!" << endl;
@@ -524,16 +540,13 @@ bool CheckPath(WARP* from, WARP* to, BLOCK* checked, vector<string> flags) {
     for(int c = 0; c < from->connections.size(); c++) {
         if(getIndex(*checked,from->connections[c].warp) != -1) continue;
         if(getIndex(*checked, to) != -1) {
-            //cout << to->warpID << " <- " << to->newWarp->warpID << " <- ";
             return true;
         }
         if(!CheckFlags(flags, from->connections[c].locks)) continue;
         if(CheckPath(from->connections[c].warp, to, checked, flags)) {
-            //cout << from->connections[c].warp->warpID << " <- ";
             return true;
         }
         if(CheckPath(from->connections[c].warp->newWarp->original, to, checked, flags)) {
-            //cout << from->connections[c].warp->newWarp->original->warpID << " <- " << from->connections[c].warp->warpID << " <- ";
             return true;
         }
     }
@@ -590,4 +603,12 @@ void GenerateLogFile(string path) {
         }
     }
     log.close();
+}
+
+static WARP* GetFirst(BLOCK* block) {
+    if(block == nullptr) cout << "WARNING: Trying to get the first of a nullptr" << endl;
+    for(int c = 0; c < sFirstList.size(); c++) {
+        if(block == sFirstList[c].block) return sFirstList[c].first;
+    }
+    return (*block)[0];
 }
