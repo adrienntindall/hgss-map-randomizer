@@ -28,8 +28,26 @@ void UnpackRom(string romPath, string arm9) {
     
     fstream bin;
     bin.open("temp\\arm9_.bin", ios::binary|ios::in|ios::out|ios::ate);
+    
+    unsigned char lang = 2;
+    
+    bin.seekp(0xF5670);
+    
+    //bin.read(&lang, 1);
     ifstream changes;
-    changes.open(arm9);
+    
+    switch(lang) {
+    case 2: //English
+        changes.open(arm9);
+        break;
+    case 5: //German
+        changes.open(arm9 + "_german");
+        break;
+    default:
+        cout << "WARNING: Detected language not currently supported, so the English scripts will be used. This may result in an unloadable game." << endl;
+        changes.open(arm9);
+        break;
+    }
     
     string line;
     

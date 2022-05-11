@@ -17,9 +17,11 @@ Known non-game breaking quirks that I enjoy:
 -There is an unused map that I included in the randomization. It is not as cool as it sounds, but it is my favourite map now.
 
 
-If you want to complete the full game in badge order up until Red, you will need to find a MINIUM of 29 rooms:
+If you want to complete the full game in badge order up until Red, you will need to find a MINIUM of 31 rooms:
 Sprout Tower - Elder Li's Room
 Violet Gym
+Slowpoke Well B1F
+Ilex Forest S
 Azalea Gym
 Goldenrod Gym
 Burnt Tower - Lower Part

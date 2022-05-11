@@ -262,7 +262,7 @@ void ConnectWarps(WARP* A, WARP* B) {
         return;
     }
     if(A->original == nullptr) {
-        cout << "Warning: " << B->warpID << " has a nullptr original" << endl;
+        cout << "Warning: " << A->warpID << " has a nullptr original" << endl;
         return;
     }
     A->newWarp = B->original;
@@ -280,6 +280,9 @@ void SwapConnections(WARP* A, WARP* B) {
         swap(sUnusedWarps[getIndex(sUnusedWarps, A)], sUnusedWarps[sUnusedWarps.size()-1]);
         sUnusedWarps.pop_back();
         sUnusedWarps.push_back(B);
+    }
+    else if ((A->newWarp != nullptr) && (B->newWarp == nullptr)) {
+        SwapConnections(B, A);
     }
     else if((A->newWarp != nullptr) && (B->newWarp != nullptr)) {
         WARP* ptr = A->newWarp->original;
@@ -478,6 +481,7 @@ bool RandomizeMap() {
                         } 
                         else {
                             SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
+                            //cout << "Note: First " << GetFirst(sProgression.back().warp->block)->warpID << " is used instead of " << sProgression.back().warp->warpID << endl;
                         }
                    }
                }
