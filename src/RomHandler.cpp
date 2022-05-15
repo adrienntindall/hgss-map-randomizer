@@ -33,18 +33,20 @@ void UnpackRom(string romPath, string arm9) {
     
     bin.seekp(0xF5670);
     
-    //bin.read(&lang, 1);
+    bin.read((char*) &lang, 1);
     ifstream changes;
     
     switch(lang) {
     case 2: //English
+        cout << "English rom detected" << endl;
         changes.open(arm9);
         break;
     case 5: //German
-        changes.open(arm9 + "_german");
+        cout << "Deutsche ROM erkannt, aber derzeit nicht unterstützt (in Entwicklung)" << endl;
+        changes.open(arm9.substr(0, arm9.length() - 4) + "_german.csv");
         break;
     default:
-        cout << "WARNING: Detected language not currently supported, so the English scripts will be used. This may result in an unloadable game." << endl;
+        cout << "WARNING: Detected language not currently supported/recognized, so the English scripts will be used. This may result in an unloadable game." << endl;
         changes.open(arm9);
         break;
     }

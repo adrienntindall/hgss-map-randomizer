@@ -406,16 +406,16 @@ bool RandomizeMap() {
             if(sUsedWarps.back() == sUsedWarps.back()->newWarp) continue;
             BLOCK* blk = sUnusedBlocks.back();
             shuffle(begin(*blk), end(*blk), rng);
-            InsertWarps((*blk)[0], (*blk)[1], sUsedWarps.back());
-            if(sUsedWarps.back()->block == nullptr) {
-                FIRST f = { blk, (*blk)[0] };
-                sFirstList.push_back(f);
-            }
-            else if(sUsedWarps.back() == GetFirst(sUsedWarps.back()->block)){
+            InsertWarps((*blk)[0], (*blk)[1], sUsedWarps.back()); //A <-> sUsedWarps.back, B <-> sUsedWarps.back.newWarp
+            if(sUsedWarps.back()->block == nullptr) { //if A got connected to a dead end, then B is the nearest connection to the center
                 FIRST f = { blk, (*blk)[1] };
                 sFirstList.push_back(f);
             }
-            else {
+            else if(sUsedWarps.back() == GetFirst(sUsedWarps.back()->block)){ //if A got connected to a nearest element, then B is the new nearest element
+                FIRST f = { blk, (*blk)[1] };
+                sFirstList.push_back(f);
+            }
+            else { //if A did NOT get connected to a nearest element/dead end, then it must be the nearest element
                 FIRST f = { blk, (*blk)[0] };
                 sFirstList.push_back(f);
             }
