@@ -395,6 +395,10 @@ bool RandomizeMap() {
                 if(find(begin(sUnusedWarps), end(sUnusedWarps), (*blk)[c]) != sUnusedWarps.end()) {
                     needsConnections.push_back((*blk)[c]);
                 }
+                else {
+                    FIRST f = { blk, (*blk)[c] };
+                    sFirstList.push_back(f);
+                }
             }
             swap(sUnusedBlocks[index], sUnusedBlocks[sUnusedBlocks.size()-1]);
             sUnusedBlocks.pop_back();
@@ -471,7 +475,12 @@ bool RandomizeMap() {
            int c;
            for(c = 0; c < sGarbageRooms.size(); c++) {
                if(getIndex(sUsedWarps, sGarbageRooms[c]) != -1) {
-                   SwapConnections(sGarbageRooms[c], sProgression.back().warp);
+                    if (sProgression.back().warp->block == nullptr) {
+                        SwapConnections(sGarbageRooms[c], sProgression.back().warp);
+                    } 
+                    else {
+                        SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
+                    }
                    if(CheckPath(startingPoint, sProgression.back().warp, sProgression.back().flags)) {
                        break;
                    }
@@ -481,7 +490,6 @@ bool RandomizeMap() {
                         } 
                         else {
                             SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
-                            //cout << "Note: First " << GetFirst(sProgression.back().warp->block)->warpID << " is used instead of " << sProgression.back().warp->warpID << endl;
                         }
                    }
                }
@@ -614,5 +622,11 @@ static WARP* GetFirst(BLOCK* block) {
     for(int c = 0; c < sFirstList.size(); c++) {
         if(block == sFirstList[c].block) return sFirstList[c].first;
     }
+    /*if(block == startingPoint->block) return (*block)[0];
+    cout << "No first detected in block" << endl;
+    cout << "Current block: " << endl;
+    for(int c = 0; c < block->size(); c++) {
+        cout << (*block)[c]->warpID << endl;
+    }*/
     return (*block)[0];
 }

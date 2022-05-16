@@ -10,3 +10,19 @@ How to map randomize your pokemon heart gold or soul silver roms:
 
 3) Your randomized rom(s) will appear in \randomized_roms, along with a log file(s). 
    Roms in this folder may be overwritten if the randomizer is run again, so be sure to move them outside this folder.
+
+Currently, only English roms are supported.
+
+The following non-English roms are currently being worked on:
+-German
+
+The following non-English roms are not supported and not currently being worked on:
+-Japanese
+-French
+-Italian
+-Spanish
+
+If you are interested in having your langauge supported sooner, please request it in an issue on the GitHub page
+https://github.com/adrienntindall/hgss-map-randomizer/issues
+
+The link also works if you notice any other issues with the randomizer
