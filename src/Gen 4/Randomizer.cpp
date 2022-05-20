@@ -289,6 +289,9 @@ void SwapConnections(WARP* A, WARP* B) {
         ConnectWarps(A, B->newWarp->original);
         ConnectWarps(B, ptr);
     }
+    else {
+        cout << "Waring: trying to swap two warps that haven't been given a new warp" << endl;
+    }
 }
 
 void InsertWarps(WARP* A, WARP* B, WARP* insertionPoint) {
@@ -475,23 +478,22 @@ bool RandomizeMap() {
            int c;
            for(c = 0; c < sGarbageRooms.size(); c++) {
                if(getIndex(sUsedWarps, sGarbageRooms[c]) != -1) {
+                    if (sProgression.back().warp->block == nullptr) { //Gyms, other rooms with one warp
+                        SwapConnections(sGarbageRooms[c], sProgression.back().warp);
+                    } 
+                    else { //E4, other rooms with 2+ warps
+                        SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
+                    }
+                    if(CheckPath(startingPoint, sProgression.back().warp, sProgression.back().flags)) {
+                       break;
+                    }
+                    //Path unreachable, swap warps back to original positions
                     if (sProgression.back().warp->block == nullptr) {
                         SwapConnections(sGarbageRooms[c], sProgression.back().warp);
                     } 
                     else {
                         SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
-                    }
-                   if(CheckPath(startingPoint, sProgression.back().warp, sProgression.back().flags)) {
-                       break;
-                   }
-                   else {
-                        if (sProgression.back().warp->block == nullptr) {
-                            SwapConnections(sGarbageRooms[c], sProgression.back().warp);
-                        } 
-                        else {
-                            SwapConnections(sGarbageRooms[c], GetFirst(sProgression.back().warp->block));
-                        }
-                   }
+                    }   
                }
            }
            if(c == sGarbageRooms.size()) {
@@ -542,7 +544,9 @@ int getIndex(vector<string> v, string K) {
 
 bool CheckPath(WARP* from, WARP* to, vector<string> flags) {
     BLOCK* checked = new BLOCK;
-    return CheckPath(from, to, checked, flags) || CheckPath(from->newWarp->original, to, checked, flags);
+    bool ret = CheckPath(from, to, checked, flags) || CheckPath(from->newWarp->original, to, checked, flags);
+    delete checked;
+    return ret;
 }
 
 bool CheckPath(WARP* from, WARP* to, BLOCK* checked, vector<string> flags) {
@@ -622,11 +626,5 @@ static WARP* GetFirst(BLOCK* block) {
     for(int c = 0; c < sFirstList.size(); c++) {
         if(block == sFirstList[c].block) return sFirstList[c].first;
     }
-    /*if(block == startingPoint->block) return (*block)[0];
-    cout << "No first detected in block" << endl;
-    cout << "Current block: " << endl;
-    for(int c = 0; c < block->size(); c++) {
-        cout << (*block)[c]->warpID << endl;
-    }*/
     return (*block)[0];
 }
