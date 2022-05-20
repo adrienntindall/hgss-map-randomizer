@@ -8,7 +8,7 @@ Changes Made:
 -The Guide Gent now loads the full map into your Pokegear
 -Kyogre and Groudon now appear in both versions, and will appear without the need of the blue orb or red orb
 -The south gate of the Elite 4 memebers' rooms has an escape method now
-
+-Rocket items can be collected even after the takeover event (Basement Key, Key Card)
 
 Known non-game breaking quirks that I enjoy:
 -Don't see a gym leader you haven't beaten? They're probably outside their gym, either go find them or change your system's date/time to when they're there.

@@ -42,7 +42,7 @@ void UnpackRom(string romPath, string arm9) {
         changes.open(arm9);
         break;
     case 5: //German
-        cout << "Deutsche ROM erkannt, aber derzeit nicht unterstützt (in Entwicklung)" << endl;
+        cout << "Deutsche ROM erkannt" << endl;
         changes.open(arm9.substr(0, arm9.length() - 4) + "_german.csv");
         break;
     default:
