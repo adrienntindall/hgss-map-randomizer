@@ -3,6 +3,7 @@ How to map randomize your pokemon heart gold or soul silver roms:
 
 1) Put desired rom to randomize in \heartgold_rom or \soulsilver_rom depending on version. 
    This will only need to be done once.
+   If these folders are missing, you downloaded the source code. Please download the release version instead.
 
 2) Run "map_randomizer.exe" 
    This will randomize every rom in the \heartgold_rom or \soulsilver_rom folders, though it will not modify them directly.
