@@ -1,13 +1,13 @@
 Changes Made:
--All warps are randomized (duh) except for Elevators, Mt Moon Square, the Power Plant, and any other scripted warps (falling through holes, etc)
-*The player's house, the Newbark Lab, and Mr Pokemon's house are also left unrandomized so the player can get pokeballs at catching tutorial and unlock them for purchase in marts
+-All warps are randomized (duh) except for Elevators, Mt Moon Square, the Power Plant, and any other scripted warps (falling through holes, etc.)
+*The player's house, the Newbark Lab, and Mr Pokémon's house are also left unrandomized so the player can get pokeballs at catching tutorial and unlock them for purchase in marts
 -It is completable* in badge order up until Red
 *Although all seeds I've tested are beatable, I am one person and cannot test every case, please report bugs to me as I probably forgot how a random cave worked and thus messed up a data file because of it
--Natu is gauranteed to be obtainable without the need for badges/hms/anything else. If you catch one at or below level 22, it will know teleport
+-Natu is guaranteed to be obtainable without the need for badges/hms/anything else. If you catch one at or below level 22, it will know teleport
 -Fly and Teleport can be used anywhere, and while in the team rocket costume
 -The Guide Gent now loads the full map into your Pokegear
 -Kyogre and Groudon now appear in both versions, and will appear without the need of the blue orb or red orb
--The south gate of the Elite 4 memebers' rooms has an escape method now
+-The south gate of the Elite 4 members' rooms has an escape method now
 -Rocket items can be collected even after the takeover event (Basement Key, Key Card)
 
 Known non-game breaking quirks that I enjoy:
@@ -17,7 +17,7 @@ Known non-game breaking quirks that I enjoy:
 -There is an unused map that I included in the randomization. It is not as cool as it sounds, but it is my favourite map now.
 
 
-If you want to complete the full game in badge order up until Red, you will need to find a MINIUM of 31 rooms:
+If you want to complete the full game in badge order up until Red, you will need to find a MINIMUM of 31 rooms:
 Sprout Tower - Elder Li's Room
 Violet Gym
 Slowpoke Well B1F

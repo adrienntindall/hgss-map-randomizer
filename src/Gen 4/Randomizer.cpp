@@ -11,7 +11,6 @@ using namespace std;
 using std::filesystem::directory_iterator;
 using std::filesystem::recursive_directory_iterator;
 
-#define REPLACE_FILES_PATH "./files/event_data/"
 #define WARP_DATA "./files/Warps.csv"
 #define WARP_DICT  "./files/WarpDictionary.csv"
 #define FILE_PATH  "./temp/event_data/"
@@ -28,7 +27,6 @@ static WARP* startingPoint;
 typedef struct progression {
     WARP* warp;
     vector<string> flags;
-    bool set = false;
 } PROGRESSION;
 static vector<PROGRESSION> sProgression;
 typedef struct FlagAlias {
@@ -47,21 +45,10 @@ typedef struct Firsts {
 static vector<FIRST> sFirstList;
 static WARP* GetFirst(BLOCK* block);
 
-void UpdateFiles() {
-    for(const auto & file : directory_iterator(REPLACE_FILES_PATH)) {
-        string pstr = file.path().string();
-        ifstream src;
-        src.open(pstr);
-        ofstream dest;
-        dest.open(FILE_PATH + pstr.substr(pstr.find_last_of("/") + 1, pstr.length()));
-        dest << src.rdbuf();
-    }
-}
-
 void AddConnection(WARP* target, WARP* connection, vector<string> flagList) {
     CONNECTION con;
     con.warp = connection;
-    con.locks = flagList;
+    con.locks = std::move(flagList);
     target->connections.push_back(con);
 }
 
@@ -88,7 +75,7 @@ void ReadSpecialBlockInput(WARP* pivot, vector<string> lines, int start, int dir
     }
 }
 
-void GetBlocks(string blockPath) {
+void GetBlocks(const string& blockPath) {
     string line;
     cout << "Getting Blocks!" << endl;
     for(const auto & file : recursive_directory_iterator(blockPath)) {
@@ -98,7 +85,7 @@ void GetBlocks(string blockPath) {
         block.open(file.path());
         string comp = path.substr(path.find_last_of('.') + 1, path.length() - 1);         
         if(comp == "blk") { //BLocKs
-            BLOCK* newBlock = new BLOCK;
+            auto* newBlock = new BLOCK;
             vector<string> lines;
             while(getline(block, line)) {
                 lines.push_back(line);  
@@ -114,8 +101,8 @@ void GetBlocks(string blockPath) {
             }
             if(path.find("NewBark") != string::npos) {
                 startingPoint = newBlock->at(0);
-                for(int c = 0; c < newBlock->size(); c++) {
-                    needsConnections.push_back(newBlock->at(c));
+                for(auto & c : *newBlock) {
+                    needsConnections.push_back(c);
                 }
             }
             else {
@@ -179,10 +166,10 @@ void GetBlocks(string blockPath) {
     cout << "Blocks gotten!" << endl;
 }
 
-WARP* GetWarpByID(string ID) {
-    for(int c = 0; c < sWarpList.size(); c++) {
-        if(sWarpList[c].warpID == ID) {
-            return &(sWarpList[c]);
+WARP* GetWarpByID(const string& ID) {
+    for(auto & c : sWarpList) {
+        if(c.warpID == ID) {
+            return &c;
         }
     }
     if((ID.find("FLAG_") == string::npos) && (ID.find("LEDGE_") == string::npos)) {
@@ -191,11 +178,11 @@ WARP* GetWarpByID(string ID) {
     return nullptr;
 }
 
-inline string csvGotoNext(string str) {
+inline string csvGotoNext(const string& str) {
     return str.substr(str.find(',') + 1, str.length());
 }
 
-inline string csvGetNext(string str) {
+inline string csvGetNext(const string& str) {
     return str.substr(0, str.find(','));
 }
 
@@ -217,10 +204,10 @@ void GetWarpList() {
         newWarp.otherID = csvGetNext(line);
         sWarpList.push_back(newWarp);
     }
-    for(int c = 0; c < sWarpList.size(); c++) {
-        sWarpList[c].original = GetWarpByID(sWarpList[c].otherID);
-        if(sWarpList[c].original == nullptr) cout << "WARNING: " << sWarpList[c].warpID << " is missing a definition for " << sWarpList[c].otherID << endl;
-        sWarpList[c].newWarp = nullptr;
+    for(auto & c : sWarpList) {
+        c.original = GetWarpByID(c.otherID);
+        if(c.original == nullptr) cout << "WARNING: " << c.warpID << " is missing a definition for " << c.otherID << endl;
+        c.newWarp = nullptr;
     }
     warpData.close();
     cout << "Done reading!" << endl;
@@ -236,9 +223,9 @@ void GetWarpDict() {
         line = csvGotoNext(line);
         short bid = stoi(line);
         //cout << sid << " " << bid << endl;
-        for (int c = 0; c < sWarpList.size(); c++) {
-            if (sid == sWarpList[c].warpTo) {
-                sWarpList[c].binaryID = bid;
+        for (auto & c : sWarpList) {
+            if (sid == c.warpTo) {
+                c.binaryID = bid;
             }
         }
     }
@@ -246,8 +233,8 @@ void GetWarpDict() {
 }
 
 WARP* GetWarpByBinIDAndAnchor(short name, short anchor) {
-    for(int c = 0; c < sUsedWarps.size(); c++) {
-        if((name == sUsedWarps[c]->binaryID) && (anchor == sUsedWarps[c]->anchor)) return sUsedWarps[c];
+    for(auto & sUsedWarp : sUsedWarps) {
+        if((name == sUsedWarp->binaryID) && (anchor == sUsedWarp->anchor)) return sUsedWarp;
     }
     return nullptr;
 }
@@ -310,7 +297,6 @@ inline short readShort(vector<unsigned char> binData, int c) {
 
 void SetWarps() {
     string line;
-    int c = 0;
     cout << "Setting Warps!" << endl;
     for(const auto & file : directory_iterator(FILE_PATH)) {
         //cout << file.path() << endl;
@@ -327,7 +313,7 @@ void SetWarps() {
         vector<unsigned char> binData(size);
         bin.read((char*) &binData[0], size);
         
-        unsigned int pos = 0;
+        int pos = 0;
         
         //Skipping bgs structs (size: 5 words = 0x14 bytes)
         pos += 4 + readWord(binData, pos) * 0x14;
@@ -435,40 +421,40 @@ bool RandomizeMap() {
         }    
     }
     //Red Rooms replacing green rooms
-    for (int c = 0; c < sRequiredDeadEnds.size(); c++) {
-        if(getIndex(sUnusedWarps, sRequiredDeadEnds[c]) == -1) continue;
+    for (auto & sRequiredDeadEnd : sRequiredDeadEnds) {
+        if(getIndex(sUnusedWarps, sRequiredDeadEnd) == -1) continue;
         shuffle(begin(sGarbageRooms), end(sGarbageRooms), rng);
-        for (int g = 0; g < sGarbageRooms.size(); g++) {
-            int g_index = getIndex(sUsedWarps, sGarbageRooms[g]);
+        for (auto & sGarbageRoom : sGarbageRooms) {
+            int g_index = getIndex(sUsedWarps, sGarbageRoom);
             if(g_index == -1) continue;
-            SwapConnections(sRequiredDeadEnds[c], sGarbageRooms[g]);
+            SwapConnections(sRequiredDeadEnd, sGarbageRoom);
             break;
         }
     }
     //Blu flag handling
     for(int t = 0; t < 15; t++) { //do this 5 times to achieve a theoretical minimum; the more the slower but better
         shuffle(begin(sOtherFlags), end(sOtherFlags), rng);
-        for (int c = 0; c < sOtherFlags.size(); c++) {
-            sOtherFlags[c].set = false;
-            sOtherFlags[c].equiv.clear();
-            sOtherFlags[c].equiv.insert(sOtherFlags[c].equiv.end(), sOtherFlags[c].def.begin(), sOtherFlags[c].def.end());
+        for (auto & sOtherFlag : sOtherFlags) {
+            sOtherFlag.set = false;
+            sOtherFlag.equiv.clear();
+            sOtherFlag.equiv.insert(sOtherFlag.equiv.end(), sOtherFlag.def.begin(), sOtherFlag.def.end());
             vector<string> required;
             for(int f = 0; f < sMainFlags.size() + 1; f++) {
                 bool check = true;
-                for(int w = 0; w < sOtherFlags[c].checks.size(); w++) {
-                    check = check && CheckPath(startingPoint, sOtherFlags[c].checks[w], sOtherFlags[c].equiv);
+                for(int w = 0; w < sOtherFlag.checks.size(); w++) {
+                    check = CheckPath(startingPoint, sOtherFlag.checks[w], sOtherFlag.equiv);
                     if(!check) {
                        break;
                     }
                 }
                 if(check) break;
                 if(f == sMainFlags.size()) continue;
-                sOtherFlags[c].equiv.push_back(sMainFlags[f]);
+                sOtherFlag.equiv.push_back(sMainFlags[f]);
                 if(f == sMainFlags.size() + 1) {
-                    sOtherFlags[c].equiv.push_back("FLAG_IMPOSSIBLE");
+                    sOtherFlag.equiv.emplace_back("FLAG_IMPOSSIBLE");
                 }
             }
-            sOtherFlags[c].set = true;
+            sOtherFlag.set = true;
         }
     }
     //Main Progression check
@@ -530,7 +516,7 @@ int getIndex(vector<BLOCK*> v, BLOCK* K) {
     }
 }
 
-int getIndex(vector<string> v, string K) {
+int getIndex(vector<string> v, const string& K) {
     auto it = find(v.begin(), v.end(), K);
     if (it != v.end())
     {
@@ -542,14 +528,14 @@ int getIndex(vector<string> v, string K) {
     }
 }
 
-bool CheckPath(WARP* from, WARP* to, vector<string> flags) {
-    BLOCK* checked = new BLOCK;
+bool CheckPath(WARP* from, WARP* to, const vector<string>& flags) {
+    auto* checked = new BLOCK;
     bool ret = CheckPath(from, to, checked, flags) || CheckPath(from->newWarp->original, to, checked, flags);
     delete checked;
     return ret;
 }
 
-bool CheckPath(WARP* from, WARP* to, BLOCK* checked, vector<string> flags) {
+bool CheckPath(WARP* from, WARP* to, BLOCK* checked, const vector<string>& flags) {
     if(from == nullptr) return false;
     if(from == to) return true;
     checked->push_back(from);
@@ -569,22 +555,22 @@ bool CheckPath(WARP* from, WARP* to, BLOCK* checked, vector<string> flags) {
     return false;
 }
 
-int OtherFlagIndex(string flag) {
+int OtherFlagIndex(const string& flag) {
     for(int c = 0; c < sOtherFlags.size(); c++) {
         if(sOtherFlags[c].flag == flag) return c;
     }
     return -1;
 }
 
-bool CheckFlags(vector<string> flags, vector<string> target) {
+bool CheckFlags(const vector<string>& flags, vector<string> target) {
     for(int c = 0; c < target.size(); c++) {
         int ofID = OtherFlagIndex(target[c]);
         if(ofID != -1) {
             if(!sOtherFlags[ofID].set) return false;
             target.erase(target.begin() + c);
             c--;
-            for(int f = 0; f < sOtherFlags[ofID].equiv.size(); f++) {
-                target.push_back(sOtherFlags[ofID].equiv[f]);
+            for(auto & f : sOtherFlags[ofID].equiv) {
+                target.push_back(f);
             }
             continue;
         }
@@ -607,14 +593,14 @@ void ClearData() {
     sMainFlags.clear();
 }
 
-void GenerateLogFile(string path) {
+void GenerateLogFile(const string& path) {
     ofstream log;
     log.open(path);
-    for (int c = 0; c < sWarpList.size(); c++) {
-        if(sWarpList[c].newWarp != nullptr) {
-            log << sWarpList[c].warpID;
+    for (auto & c : sWarpList) {
+        if(c.newWarp != nullptr) {
+            log << c.warpID;
             log << " <-> ";
-            log << sWarpList[c].newWarp->original->warpID;
+            log << c.newWarp->original->warpID;
             log << endl;
         }
     }
@@ -623,8 +609,8 @@ void GenerateLogFile(string path) {
 
 static WARP* GetFirst(BLOCK* block) {
     if(block == nullptr) cout << "WARNING: Trying to get the first of a nullptr" << endl;
-    for(int c = 0; c < sFirstList.size(); c++) {
-        if(block == sFirstList[c].block) return sFirstList[c].first;
+    for(auto & c : sFirstList) {
+        if(block == c.block) return c.first;
     }
     return (*block)[0];
 }

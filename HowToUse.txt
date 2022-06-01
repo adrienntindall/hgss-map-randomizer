@@ -1,5 +1,5 @@
 
-How to map randomize your pokemon heart gold or soul silver roms:
+How to map randomize your Pokémon HeartGold or soul SoulSilver:
 
 1) Put desired rom to randomize in \heartgold_rom or \soulsilver_rom depending on version. 
    This will only need to be done once.
@@ -22,7 +22,7 @@ The following non-English roms are not supported and not currently being worked 
 -Italiana
 -Español
 
-If you are interested in having your langauge supported, please request it in an issue on the GitHub page
+If you are interested in having your language supported, please request it in an issue on the GitHub page
 https://github.com/adrienntindall/hgss-map-randomizer/issues
 
 The link also works if you notice any other issues with the randomizer

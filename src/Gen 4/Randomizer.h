@@ -28,21 +28,20 @@ typedef struct Connection {
     vector<string> locks;
 } CONNECTION;
 
-void UpdateFiles();
 void GetWarpList();
 void GetWarpDict();
-void GetBlocks(string blockPath);
-WARP* GetWarpByID(string ID);
+void GetBlocks(const string& blockPath);
+WARP* GetWarpByID(const string& ID);
 bool RandomizeMap();
 WARP* GetWarpByBinIDAndAnchor(short name, short anchor);
 void SetWarps();
 int getIndex(vector<WARP*> v, WARP* K);
 int getIndex(vector<BLOCK*> v, BLOCK* K);
-int getIndex(vector<string> v, string K);
-bool CheckPath(WARP* from, WARP* to, vector<string> flags);
-bool CheckPath(WARP* from, WARP* to, BLOCK* checked, vector<string> flags);
-bool CheckFlags(vector<string> flags, vector<string> target);
+int getIndex(vector<string> v, const string& K);
+bool CheckPath(WARP* from, WARP* to, const vector<string>& flags);
+bool CheckPath(WARP* from, WARP* to, BLOCK* checked, const vector<string>& flags);
+bool CheckFlags(const vector<string>& flags, vector<string> target);
 void ClearData();
-void GenerateLogFile(string path);
+void GenerateLogFile(const string& path);
 
 #endif
