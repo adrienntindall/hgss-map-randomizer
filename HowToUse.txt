@@ -1,5 +1,5 @@
 
-How to map randomize your Pokémon HeartGold or soul SoulSilver:
+How to map randomize your Pokémon HeartGold or SoulSilver ROMs:
 
 1) Put desired rom to randomize in \heartgold_rom or \soulsilver_rom depending on version. 
    This will only need to be done once.
