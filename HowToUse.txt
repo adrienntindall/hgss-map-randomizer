@@ -15,12 +15,12 @@ How to map randomize your pokemon heart gold or soul silver roms:
 The following languages are supported:
 -English
 -Deutsch
+-Español
 
 The following non-English roms are not supported and not currently being worked on:
 -日本語
 -Français
 -Italiana
--Español
 
 If you are interested in having your langauge supported, please request it in an issue on the GitHub page
 https://github.com/adrienntindall/hgss-map-randomizer/issues

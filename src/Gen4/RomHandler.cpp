@@ -37,16 +37,31 @@ void UnpackRom(string romPath, string arm9) {
     ifstream changes;
     
     switch(lang) {
+    case 1:
+        cout << "日本語ロムが検出されましたが、現在サポートされていません。実装をリクエストするには、GitHubで問題を作成してください。" << endl;
+        changes.open(arm9);
+        break;
     case 2: //English
         cout << "English rom detected" << endl;
         changes.open(arm9);
         break;
+    case 3: //French
+        cout << "ROM française détectée mais non prise en charge actuellement. Veuillez créer un problème sur github pour demander la mise en œuvre" << endl;
+        changes.open(arm9);
+    case 4: //Italian
+        cout << "ROM italiana rilevata ma attualmente non supportata. Si prega di fare un problema su github per richiedere l'implementazione" << endl;
+        changes.open(arm9);
     case 5: //German
         cout << "Deutsche ROM erkannt" << endl;
         changes.open(arm9.substr(0, arm9.length() - 4) + "_german.csv");
         break;
+    case 164: //Spanish, this ROM is whacky and has random weird offsets so this is an ñ character representing something else
+        cout << "ROM española detectada" << endl;
+        changes.open(arm9.substr(0, arm9.length() - 4) + "_spanish.csv");
+        break;
     default:
-        cout << "WARNING: Detected language not currently supported/recognized, so the English scripts will be used. This may result in an unloadable game." << endl;
+        cout << "WARNING: Detected language not recognized, there may be an error with your rom" << endl;
+        cout << "Detected language ID: " << int(lang) << " (range is 1-7)" << endl;
         changes.open(arm9);
         break;
     }

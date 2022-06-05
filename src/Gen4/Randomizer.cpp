@@ -47,17 +47,6 @@ typedef struct Firsts {
 static vector<FIRST> sFirstList;
 static WARP* GetFirst(BLOCK* block);
 
-void UpdateFiles() {
-    for(const auto & file : directory_iterator(REPLACE_FILES_PATH)) {
-        string pstr = file.path().string();
-        ifstream src;
-        src.open(pstr);
-        ofstream dest;
-        dest.open(FILE_PATH + pstr.substr(pstr.find_last_of("/") + 1, pstr.length()));
-        dest << src.rdbuf();
-    }
-}
-
 void AddConnection(WARP* target, WARP* connection, vector<string> flagList) {
     CONNECTION con;
     con.warp = connection;
@@ -204,6 +193,7 @@ void GetWarpList() {
     string line;
     ifstream warpData;
     warpData.open(WARP_DATA);
+    getline(warpData, line); //burn header
     while(getline(warpData, line)) {
         WARP newWarp;
         newWarp.warpID = csvGetNext(line);
@@ -446,7 +436,7 @@ bool RandomizeMap() {
         }
     }
     //Blu flag handling
-    for(int t = 0; t < 15; t++) { //do this 5 times to achieve a theoretical minimum; the more the slower but better
+    for(int t = 0; t < 20; t++) { //do this 5 times to achieve a theoretical minimum; the more the slower but better
         shuffle(begin(sOtherFlags), end(sOtherFlags), rng);
         for (int c = 0; c < sOtherFlags.size(); c++) {
             sOtherFlags[c].set = false;

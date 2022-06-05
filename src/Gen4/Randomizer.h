@@ -28,7 +28,6 @@ typedef struct Connection {
     vector<string> locks;
 } CONNECTION;
 
-void UpdateFiles();
 void GetWarpList();
 void GetWarpDict();
 void GetBlocks(string blockPath);
