@@ -16,10 +16,10 @@ The following languages are supported:
 -English
 -Deutsch
 -Español
+-Français
 
 The following non-English roms are not supported and not currently being worked on:
 -日本語
--Français
 -Italiana
 
 If you are interested in having your langauge supported, please request it in an issue on the GitHub page

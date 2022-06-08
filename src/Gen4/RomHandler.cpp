@@ -46,11 +46,13 @@ void UnpackRom(string romPath, string arm9) {
         changes.open(arm9);
         break;
     case 3: //French
-        cout << "ROM française détectée mais non prise en charge actuellement. Veuillez créer un problème sur github pour demander la mise en œuvre" << endl;
-        changes.open(arm9);
+        cout << "ROM française détectée" << endl;
+        changes.open(arm9.substr(0, arm9.length() - 4) + "_french.csv");
+        break;
     case 4: //Italian
         cout << "ROM italiana rilevata ma attualmente non supportata. Si prega di fare un problema su github per richiedere l'implementazione" << endl;
         changes.open(arm9);
+        break;
     case 5: //German
         cout << "Deutsche ROM erkannt" << endl;
         changes.open(arm9.substr(0, arm9.length() - 4) + "_german.csv");
