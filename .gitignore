@@ -1,3 +1,6 @@
 //Roms
 *.nds
 *.log
+
+//Development tools
+*replace*
