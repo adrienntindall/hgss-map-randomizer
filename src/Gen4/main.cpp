@@ -19,6 +19,7 @@ static void HandleRandomization(string directory, string data, string arm9) {
         while(true) {
             GetWarpList();
             GetWarpDict();
+            GetBlocks(HGSS_COMMON);
             GetBlocks(string(data));
             if(RandomizeMap()) break;
             cout << "Error: Unbeatable seed. Retrying..." << endl;

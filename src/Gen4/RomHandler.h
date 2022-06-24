@@ -5,6 +5,7 @@
 
 using std::string;
 
+#define HGSS_COMMON "./files/Blocks_HGSS_Shared/"
 #define SS_PATH     "soulsilver_rom\\"
 #define SS_ARM9     "files\\hgss_script.csv"
 #define HG_ARM9     "files\\hgss_script.csv"
