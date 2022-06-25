@@ -1,6 +1,11 @@
 //Roms
 *.nds
 *.log
+temp/*
 
 //Development tools
 *replace*
+
+//=)
+files/bw2_changes/ow_sprites/*
+*/2_00000616.bin
