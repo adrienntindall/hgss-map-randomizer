@@ -13,7 +13,7 @@ static bool flag = false;
 
 static long int getSeed(string* seedInput){
     while(true){
-        cout << "Enter seed (blank for default): ";
+        cout << "Enter a seed number (blank for default): ";
         getline(cin, *seedInput);
 
         if(seedInput->empty()){
@@ -27,6 +27,7 @@ static long int getSeed(string* seedInput){
             if(start != end){
                 return seed;
             }
+	    cout << "Seed malformed!" << endl;
         }
     }
 }
