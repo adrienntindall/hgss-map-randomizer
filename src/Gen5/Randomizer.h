@@ -33,7 +33,7 @@ void GetWarpList();
 void GetWarpDict();
 void GetBlocks(string blockPath);
 WARP* GetWarpByID(string ID);
-bool RandomizeMap();
+bool RandomizeMap(long int seed);
 WARP* GetWarpByBinIDAndAnchor(short name, short anchor);
 void SetWarps();
 int getIndex(vector<WARP*> v, WARP* K);
