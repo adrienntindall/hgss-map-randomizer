@@ -348,10 +348,12 @@ void SetWarps() {
     cout << "Warps Set!" << endl;
 }
 
-bool RandomizeMap() {
+bool RandomizeMap(long int seed) {
     cout << "Starting Randomization!" << endl;
     auto rd = random_device {}; 
     auto rng = default_random_engine { rd() };
+    rng.seed(seed);
+
     shuffle(begin(sUnusedWarps), end(sUnusedWarps), rng);
     
     while(!needsConnections.empty()) {
