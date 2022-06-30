@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <random>
 #include <filesystem>
 #include <iostream>
 #include <time.h>
@@ -10,14 +11,19 @@ using std::filesystem::directory_iterator;
 using std::filesystem::recursive_directory_iterator;
 
 static bool flag = false;
+static mt19937 generator;
+
+static unsigned long int getRandomSeed() {
+    return generator();
+}
 
 static long int getSeed(string* seedInput){
     while(true){
-        cout << "Enter a seed number (blank for default): ";
+        cout << "Enter a seed number (blank for random): ";
         getline(cin, *seedInput);
 
         if(seedInput->empty()){
-            return (long int) time(NULL);
+            return getRandomSeed();
         } else {
             const char* start = seedInput->c_str();
             char* end = (char*)start;
@@ -33,6 +39,7 @@ static long int getSeed(string* seedInput){
 }
 
 static void HandleRandomization(string directory, string data, string arm9) {
+    generator = mt19937(time(NULL));
     for(const auto & file : recursive_directory_iterator(directory)) {
         flag = true;
         string pstr = file.path().string();
@@ -41,9 +48,6 @@ static void HandleRandomization(string directory, string data, string arm9) {
         string seedInput;
         long int seed = getSeed(&seedInput);
         while(true) {
-            if (seedInput.empty()){
-                seed = (long int) time(NULL);
-            }
             cout << "Trying seed " << seed << endl;
             GetWarpList();
             GetWarpDict();
@@ -54,8 +58,12 @@ static void HandleRandomization(string directory, string data, string arm9) {
             if (!seedInput.empty()){
                 seed = getSeed(&seedInput);
             }
+            else {
+                seed = getRandomSeed();
+            }
             ClearData();
         }
+        cout << "Rom randomized with seed: " << seed << "." << endl;
         pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length()-4) + "_map_randomized";
         GenerateLogFile(OUT_PATH + pstr + ".log");
         SetWarps();
