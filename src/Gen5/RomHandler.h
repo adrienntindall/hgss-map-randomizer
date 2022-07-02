@@ -5,9 +5,14 @@
 
 using std::string;
 
+#define ARM9_DEC    "tools\\blz.exe"
 #define W2_PATH     "white2_rom\\"
 #define OUT_PATH    "randomized_roms\\"
 #define W2_DATA     "./files/Blocks_W2/"
+#define BW2_DATA_SHARED  "./files/Blocks_BW2_Shared/"
+#define SPRINGSUMMER_DATA "./files/Blocks_BW2_Seasons/SpringSummer/"
+#define AUTUMN_DATA "./files/Blocks_BW2_Seasons/Autumn/"
+#define WINTER_DATA "./files/Blocks_BW2_Seasons/Winter/"
 #define NDS_TOOL    "tools\\ndstool.exe"
 #define KNARC       "tools\\knarc.exe"   
 #define EVENT_DATA  "files\\bw2_changes\\event_data_bw2" 
@@ -17,6 +22,19 @@ using std::string;
 #define OW_SPRITES   "files\\bw2_changes\\ow_sprites"
 #define MUGSHOTS     "files\\bw2_changes\\mugshots"
 
+//Season consts
+enum Seasons {
+    SEASON_SPRING,
+    SEASON_SUMMER,
+    SEASON_AUTUMN,
+    SEASON_WINTER
+};
+
+//File change locations
+#define BW2_UNIVERSAL       "files\\bw2_script_universal.csv"
+#define SEASON_LOCK_W2_ENG "files\\Blocks_BW2_Seasons\\SeasonScripts\\W2SeasonLock_English.csv"
+
+void LockSeason(string changesPath, const char season);
 void UnpackRom(string path, string arm9);
 void UnpackFieldNarc();
 void PackFieldNarc();

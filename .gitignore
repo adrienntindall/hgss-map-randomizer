@@ -2,6 +2,7 @@
 *.nds
 *.log
 temp/*
+data/*
 
 //Development tools
 *replace*

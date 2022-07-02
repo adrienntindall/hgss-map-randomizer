@@ -1,6 +1,9 @@
+#include <algorithm>
 #include <cstdlib>
+#include <random>
 #include <filesystem>
 #include <iostream>
+#include <time.h>
 #include "Randomizer.h"
 #include "RomHandler.h"
 
@@ -9,14 +12,19 @@ using std::filesystem::directory_iterator;
 using std::filesystem::recursive_directory_iterator;
 
 static bool flag = false;
+static mt19937 generator;
+
+static unsigned long int getRandomSeed() {
+    return generator();
+}
 
 static long int getSeed(string* seedInput){
     while(true){
-        cout << "Enter a seed number (blank for default): ";
+        cout << "Enter a seed number (blank for random): ";
         getline(cin, *seedInput);
 
         if(seedInput->empty()){
-            return (long int) time(NULL);
+            return getRandomSeed();
         } else {
             const char* start = seedInput->c_str();
             char* end = (char*)start;
@@ -31,14 +39,40 @@ static long int getSeed(string* seedInput){
     }
 }
 
+static int getSeason(string* seasonInput){
+    while(true){
+        cout << "Enter a season (blank for random, 'current' for current season): ";
+        getline(cin, *seasonInput);
+        transform(seasonInput->begin(), seasonInput->end(), seasonInput->begin(), ::tolower);
+        if(seasonInput->empty()){
+            return rand() % 4;
+        } else {
+            if(*seasonInput == "autumn" || *seasonInput == "fall" || *seasonInput == "2") return SEASON_AUTUMN;
+            if(*seasonInput == "spring" || *seasonInput == "0") return SEASON_SPRING;
+            if(*seasonInput == "summer" || *seasonInput == "1") return SEASON_SUMMER;
+            if(*seasonInput == "winter") return SEASON_WINTER;
+            if(*seasonInput == "current" || *seasonInput == "3") {
+                time_t t = time(NULL);
+                tm* now = localtime(&t);
+                return now->tm_mon % 4;
+            }
+            cout << "Invalid season!" << endl;
+        }
+    }
+}
+
 static void HandleRandomization(string directory, string data, string arm9) {
+    generator = mt19937(time(NULL));
+    srand(time(NULL));
     for(const auto & file : recursive_directory_iterator(directory)) {
         flag = true;
         string pstr = file.path().string();
         UnpackRom(pstr, arm9);
         UnpackFieldNarc();
         string seedInput;
+        string seasonInput;
         long int seed = getSeed(&seedInput);
+        int season = getSeason(&seasonInput);
         while(true) {
             if (seedInput.empty()){
                 seed = (long int) time(NULL);
@@ -47,13 +81,36 @@ static void HandleRandomization(string directory, string data, string arm9) {
             GetWarpList();
             GetWarpDict();
             GetBlocks(string(data));
+            GetBlocks(string(BW2_DATA_SHARED));
+            switch(season) {
+                case SEASON_SPRING:
+                case SEASON_SUMMER:
+                    GetBlocks(string(SPRINGSUMMER_DATA));
+                    break;
+                case SEASON_AUTUMN:
+                    GetBlocks(string(AUTUMN_DATA));
+                    break;
+                case SEASON_WINTER:
+                    GetBlocks(string(WINTER_DATA));
+                    break;
+            }
             if(RandomizeMap(seed)) break;
             cout << "Error: Unbeatable seed. Retrying..." << endl;
             if (!seedInput.empty()){
                 seed = getSeed(&seedInput);
             }
+            else {
+                seed = getRandomSeed();
+            }
+            if(!seasonInput.empty()) {
+                season = getSeason(&seasonInput);
+            }
+            else {
+                season = rand() % 4;
+            }
             ClearData();
         }
+        LockSeason(string(SEASON_LOCK_W2_ENG), season);
         pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length()-4) + "_map_randomized";
         GenerateLogFile(OUT_PATH + pstr + ".log");
         SetWarps();

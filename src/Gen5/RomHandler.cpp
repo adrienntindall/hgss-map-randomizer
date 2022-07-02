@@ -7,10 +7,78 @@ using namespace std;
 using std::filesystem::directory_iterator;
 using std::filesystem::recursive_directory_iterator;
 
+inline string csvGotoNext(string str) {
+    return str.substr(str.find(',') + 1, str.length());
+}
+
+inline string csvGetNext(string str) {
+    return str.substr(0, str.find(','));
+}
+
+
+void ApplyChanges(string changesPath) {
+    fstream bin;
+    bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
+    
+    ifstream changes;
+    changes.open(changesPath);
+    
+    string line;
+    
+    getline(changes, line);
+    
+    while (getline(changes, line)) {
+        int pos = stoi(csvGetNext(line));
+        line = csvGotoNext(line);
+        char dat = stoi(line);
+        bin.seekp(pos);
+        bin.write(&dat, 1);
+    }
+    
+    changes.close();
+    bin.close();
+}
+
+void LockSeason(string changesPath, const char season) {
+    fstream bin;
+    bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
+    
+    ifstream changes;
+    changes.open(changesPath);
+    
+    string line;
+    
+    getline(changes, line);
+    
+    bool flag = false;
+    
+    while (getline(changes, line)) {
+        int pos = stoi(csvGetNext(line));
+        line = csvGotoNext(line);
+        char dat = stoi(line);
+        bin.seekp(pos);
+        if(flag) {
+            bin.write(&dat, 1);
+        }
+        else {
+            bin.write(&season, 1);
+            flag = true;
+        }
+    }
+    
+    changes.close();
+    bin.close();
+}
+
 void UnpackRom(string romPath, string arm9) {
     string command = string(NDS_TOOL) + " -x \"" + romPath + "\" -9 temp\\arm9.bin -7 temp\\arm7.bin -y9 temp\\y9.bin -y7 temp\\y7.bin -d data -y temp\\overlay -t temp\\banner.bin -h temp\\header.bin";
     cout << command << endl;
     system(command.c_str());
+    
+    command = string(ARM9_DEC) + " -d temp\\arm9.bin";
+    system(command.c_str());
+    
+    ApplyChanges(string(BW2_UNIVERSAL));
 }
 
 inline void CopyFiles(string narc_path, string temp_path, string data_path) {
