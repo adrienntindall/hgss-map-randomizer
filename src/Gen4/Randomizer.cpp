@@ -46,6 +46,7 @@ typedef struct Firsts {
 } FIRST;
 static vector<FIRST> sFirstList;
 static WARP* GetFirst(BLOCK* block);
+static long int sd;
 
 void AddConnection(WARP* target, WARP* connection, vector<string> flagList) {
     CONNECTION con;
@@ -79,7 +80,6 @@ void ReadSpecialBlockInput(WARP* pivot, vector<string> lines, int start, int dir
 
 void GetBlocks(string blockPath) {
     string line;
-    cout << "Getting Blocks!" << endl;
     for(const auto & file : recursive_directory_iterator(blockPath)) {
         string path = file.path().string();
         //cout << path << endl;
@@ -165,7 +165,6 @@ void GetBlocks(string blockPath) {
         }
         block.close();
     }
-    cout << "Blocks gotten!" << endl;
 }
 
 WARP* GetWarpByID(string ID) {
@@ -189,7 +188,6 @@ inline string csvGetNext(string str) {
 }
 
 void GetWarpList() {
-    cout << "Reading in warps!" << endl;
     string line;
     ifstream warpData;
     warpData.open(WARP_DATA);
@@ -213,7 +211,6 @@ void GetWarpList() {
         sWarpList[c].newWarp = nullptr;
     }
     warpData.close();
-    cout << "Done reading!" << endl;
 }
 
 void GetWarpDict() {
@@ -288,6 +285,7 @@ void InsertWarps(WARP* A, WARP* B, WARP* insertionPoint) {
     WARP* warp2 = insertionPoint->newWarp->original;
     ConnectWarps(A, insertionPoint);
     ConnectWarps(B, warp2);
+    //cout << "Inserted " << A->warpID << " and " << B->warpID << " between " << insertionPoint->warpID << " and " << warp2->warpID << endl;
 }
 
 inline int readWord(vector<unsigned char> binData, int c) {
@@ -352,15 +350,16 @@ void SetWarps() {
     cout << "Warps Set!" << endl;
 }
 
-bool RandomizeMap() {
+bool RandomizeMap(long int seed) {
     cout << "Starting Randomization!" << endl;
-    auto rd = random_device {}; 
-    auto rng = default_random_engine { rd() };
+    sd = seed;
+    auto rng = default_random_engine(seed);
     shuffle(begin(sUnusedWarps), end(sUnusedWarps), rng);
     
     while(!needsConnections.empty()) {
         shuffle(begin(needsConnections), end(needsConnections), rng);
 
+        //takes a random unused warp and a random warp from the ones currently accessible and connects them
         WARP* warp = sUnusedWarps.back();
         WARP* neededWarp = needsConnections.back();
         ConnectWarps(warp, neededWarp);
@@ -371,6 +370,7 @@ bool RandomizeMap() {
         sUnusedWarps.pop_back();
         needsConnections.pop_back();
         
+        //Remove the warps that just got used and are shared in both lists
         int index = getIndex(needsConnections, warp);
         if(index != -1) {
             swap(needsConnections[index], needsConnections[needsConnections.size()-1]);
@@ -381,6 +381,8 @@ bool RandomizeMap() {
             swap(sUnusedWarps[index], sUnusedWarps[sUnusedWarps.size()-1]);
             sUnusedWarps.pop_back();
         }
+        
+        //if the newly added warp is part of a block we haven't "discovered" yet, add it to the list of accessible warps
         index = getIndex(sUnusedBlocks, warp->block);
         if((warp->block != nullptr) && (index != -1)) {
             BLOCK* blk = warp->block;
@@ -397,10 +399,11 @@ bool RandomizeMap() {
             sUnusedBlocks.pop_back();
         }
         
+        //if we ran out of connections, add a random unused one that connects to other warps to the list
         while(needsConnections.empty() && !sUnusedBlocks.empty()) {
             shuffle(begin(sUnusedBlocks), end(sUnusedBlocks), rng);
             shuffle(begin(sUsedWarps), end(sUsedWarps), rng);
-            if(sUsedWarps.back() == sUsedWarps.back()->newWarp) continue;
+            if(sUsedWarps.back() == sUsedWarps.back()->newWarp->original) continue;
             BLOCK* blk = sUnusedBlocks.back();
             shuffle(begin(*blk), end(*blk), rng);
             InsertWarps((*blk)[0], (*blk)[1], sUsedWarps.back()); //A <-> sUsedWarps.back, B <-> sUsedWarps.back.newWarp
@@ -418,6 +421,10 @@ bool RandomizeMap() {
             }
             sUsedWarps.push_back((*blk)[0]);
             sUsedWarps.push_back((*blk)[1]);
+            for(int c = 0; c < 2; c++) {
+                swap(sUnusedWarps[getIndex(sUnusedWarps, (*blk)[c])], sUnusedWarps[sUnusedWarps.size()-1]);
+                sUnusedWarps.pop_back();
+            }
             for(int c = 2; c < blk->size(); c++) {
                 needsConnections.push_back((*blk)[c]);
             }
@@ -600,6 +607,7 @@ void ClearData() {
 void GenerateLogFile(string path) {
     ofstream log;
     log.open(path);
+    log << "Seed: " << sd << endl;
     for (int c = 0; c < sWarpList.size(); c++) {
         if(sWarpList[c].newWarp != nullptr) {
             log << sWarpList[c].warpID;
