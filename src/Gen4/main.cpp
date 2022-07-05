@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <iostream>
 #include <time.h>
+#include <functional>
 #include "Randomizer.h"
 #include "RomHandler.h"
 
@@ -33,7 +34,8 @@ static long int getSeed(string* seedInput){
             if(start != end){
                 return seed;
             }
-	    cout << "Seed malformed!" << endl;
+            hash<string> hash;
+            return hash(*seedInput);
         }
     }
 }

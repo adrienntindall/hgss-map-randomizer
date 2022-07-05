@@ -45,6 +45,7 @@ typedef struct Firsts {
     WARP* first;
 } FIRST;
 static vector<FIRST> sFirstList;
+static long int sd;
 
 void AddConnection(WARP* target, WARP* connection, vector<string> flagList) {
     CONNECTION con;
@@ -354,6 +355,8 @@ bool RandomizeMap(long int seed) {
     auto rng = default_random_engine { rd() };
     rng.seed(seed);
 
+    sd = seed;
+
     shuffle(begin(sUnusedWarps), end(sUnusedWarps), rng);
     
     while(!needsConnections.empty()) {
@@ -416,6 +419,10 @@ bool RandomizeMap(long int seed) {
             }
             sUsedWarps.push_back((*blk)[0]);
             sUsedWarps.push_back((*blk)[1]);
+            for(int c = 0; c < 2; c++) {
+                swap(sUnusedWarps[getIndex(sUnusedWarps, (*blk)[c])], sUnusedWarps[sUnusedWarps.size()-1]);
+                sUnusedWarps.pop_back();
+            }
             for(int c = 2; c < blk->size(); c++) {
                 needsConnections.push_back((*blk)[c]);
             }
@@ -598,6 +605,7 @@ void ClearData() {
 void GenerateLogFile(string path) {
     ofstream log;
     log.open(path);
+    log << "Seed: " << sd << endl;
     for (int c = 0; c < sWarpList.size(); c++) {
         if(sWarpList[c].newWarp != nullptr) {
             log << sWarpList[c].warpID;
