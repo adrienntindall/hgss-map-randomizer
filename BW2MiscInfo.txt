@@ -1,0 +1,36 @@
+Changes Made:
+-Removed ALL post game locks/unreasonable requirements, including:
+*NPCs blocking the way
+*Hugh giving dive in Undella Town
+*Professor Juniper giving the Permit in her lab
+*Professor Juniper activating the Cave of Being event that spawns the Lake Trio
+-The randomizer includes maps from both Black 2 AND White 2, though due to limitations, the following will still be version exclusive:
+*Black City/White Forest
+*Plasma Frigate's basement room
+*Route 4
+-The only unrandomized maps are ones where you're forced into by an NPC:
+*Player's House
+*Aspertia Pokemon Center
+*Team Plasma's Driftvale House
+*PWT Building
+*Route 6 Season Research Station
+*Lacunosa's Story House
+*Plasma Frigate docks in the PWT and Route 21
+
+Some maps have multiple different map files, while others have different states.
+Those with map files will have ALL the versions of their map included.
+The following is a list of those as to not throw you off too much:
+-Crater Forest (Frozen/Damaged)
+-Strange House
+*For the main rooms, the 3 states are as follows:
+  *Phase 1 - Only the leftmost stairs are unblocked
+  *Phase 2 - Both stairs and all downstairs rooms are unblocked
+  *Phase 3 - The rightmost stairs and all upstairs rooms are unblocked
+*ALL these maps will have different warps
+
+The Abyssal Ruins is only randomized at the entrances, so no need to worry about solving the full puzzle.
+You can use surf there like any water area, and every entrance can be gotten to
+ from every other entrance, even with the step limit (500 steps)
+
+After Opelucid freezes, you will be unable to access some of the warps until you beat the champion
+As such, while they can still be used as connectors, nothing important will ever be behind them
