@@ -337,6 +337,9 @@ void SetWarps() {
             WARP* warp = GetWarpByBinIDAndAnchor(mapHeaderID, anchor);
             if (warp != nullptr) {
                 //cout << "Changing " << warp->warpID << " to " << warp->newWarp->warpID << endl;
+                if(warp->newWarp == nullptr) {
+                    cout << "WARNING: Trying to set warp " << warp->warpID << " to a null warp (randomizer will crash now)" << endl;
+                }
                 bin.seekp(pos);
                 bin.write((char*) &warp->newWarp->binaryID, 2);
                 bin.seekp(pos + 2);
