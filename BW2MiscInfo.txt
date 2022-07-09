@@ -17,6 +17,9 @@ Changes Made:
 *Lacunosa's Story House
 *Plasma Frigate docks in the PWT and Route 21
 
+Flag Information:
+-Ghetsis will battle you in Kyurem's room after you talk to Hugh in Crater Forest while it is frozen
+
 Some maps have multiple different map files, while others have different states.
 Those with map files will have ALL the versions of their map included.
 The following is a list of those as to not throw you off too much:
