@@ -32,7 +32,7 @@ enum Seasons {
 
 //File change locations
 #define BW2_UNIVERSAL       "files\\bw2_script_universal.csv"
-#define SEASON_LOCK_W2_ENG "files\\Blocks_BW2_Seasons\\SeasonScripts\\W2SeasonLock_English.csv"
+#define SEASON_LOCK_BASE_W2 "files\\Blocks_BW2_Seasons\\SeasonScripts\\W2SeasonLock"
 
 void LockSeason(string changesPath, const char season);
 void UnpackRom(string path, string arm9);

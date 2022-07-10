@@ -49,11 +49,14 @@ static int getSeason(string* seasonInput){
         if(seasonInput->empty()){
             return rand() % 4;
         } else {
-            if(*seasonInput == "autumn" || *seasonInput == "fall" || *seasonInput == "2") return SEASON_AUTUMN;
-            if(*seasonInput == "spring" || *seasonInput == "0") return SEASON_SPRING;
-            if(*seasonInput == "summer" || *seasonInput == "1") return SEASON_SUMMER;
+            if(*seasonInput == "autumn" || *seasonInput == "fall" || *seasonInput == "2" ||
+                *seasonInput == "herbst") return SEASON_AUTUMN;
+            if(*seasonInput == "spring" || *seasonInput == "0" ||
+                *seasonInput == "frühling" || *seasonInput == "fruhling") return SEASON_SPRING;
+            if(*seasonInput == "summer" || *seasonInput == "1" ||
+                *seasonInput == "sommer") return SEASON_SUMMER;
             if(*seasonInput == "winter") return SEASON_WINTER;
-            if(*seasonInput == "current" || *seasonInput == "3") {
+            if(*seasonInput == "current" || *seasonInput == "3" || *seasonInput == "aktuell") {
                 time_t t = time(NULL);
                 tm* now = localtime(&t);
                 return now->tm_mon % 4;
@@ -112,7 +115,7 @@ static void HandleRandomization(string directory, string data, string arm9) {
             }
             ClearData();
         }
-        LockSeason(string(SEASON_LOCK_W2_ENG), season);
+        LockSeason(string(SEASON_LOCK_BASE_W2), season);
         pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length()-4) + "_map_randomized";
         GenerateLogFile(OUT_PATH + pstr + ".log");
         SetWarps();

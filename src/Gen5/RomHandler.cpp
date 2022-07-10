@@ -7,6 +7,8 @@ using namespace std;
 using std::filesystem::directory_iterator;
 using std::filesystem::recursive_directory_iterator;
 
+static string langExt = "_english.csv";
+
 inline string csvGotoNext(string str) {
     return str.substr(str.find(',') + 1, str.length());
 }
@@ -15,8 +17,9 @@ inline string csvGetNext(string str) {
     return str.substr(0, str.find(','));
 }
 
-
 void ApplyChanges(string changesPath) {
+    changesPath += langExt;
+    
     fstream bin;
     bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
     
@@ -40,6 +43,8 @@ void ApplyChanges(string changesPath) {
 }
 
 void LockSeason(string changesPath, const char season) {
+    changesPath += langExt;
+    
     fstream bin;
     bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
     
@@ -79,6 +84,33 @@ void UnpackRom(string romPath, string arm9) {
     system(command.c_str());
     
     ApplyChanges(string(BW2_UNIVERSAL));
+    
+    fstream bin;
+    bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
+    
+    unsigned char lang;
+    
+    bin.seekp(0xE);
+    
+    bin.read((char*) &lang, 2);
+    
+    switch(lang) {
+        case 62:
+            cout << "English rom detected" << endl;
+            langExt = "_english.csv";
+            break;
+        case 227:
+            cout << "Deutsche ROM erkannt" << endl;
+            langExt = "_german.csv";
+            break;
+        default:
+            cout << "WARNING: Detected language not recognized, either your language is not supported or there may be an error with your rom" << endl;
+            cout << "Detected language ID: " << int(lang) << endl;
+            
+            break;
+    }
+    
+    bin.close();
 }
 
 inline void CopyFiles(string narc_path, string temp_path, string data_path) {
@@ -95,6 +127,8 @@ inline void CopyFiles(string narc_path, string temp_path, string data_path) {
 }
 
 void UnpackFieldNarc() {
+    system("echo off");
+    
     //Updating some select files:
     //Event Data
     CopyFiles("data\\a\\1\\2\\6", "temp\\event_data", EVENT_DATA);
@@ -140,7 +174,7 @@ void UnpackFieldNarc() {
     
     //=)
     CopyFiles("data\\a\\0\\4\\8", "temp\\ow_spr", OW_SPRITES);
-    
+    system("echo on");
 }
 
 void PackFieldNarc() {
