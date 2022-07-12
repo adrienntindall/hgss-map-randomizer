@@ -401,7 +401,7 @@ bool RandomizeMap(long int seed) {
         while(needsConnections.empty() && !sUnusedBlocks.empty()) {
             shuffle(begin(sUnusedBlocks), end(sUnusedBlocks), rng);
             shuffle(begin(sUsedWarps), end(sUsedWarps), rng);
-            if(sUsedWarps.back() == sUsedWarps.back()->newWarp) continue;
+            if(sUsedWarps.back() == sUsedWarps.back()->newWarp->original) continue;
             BLOCK* blk = sUnusedBlocks.back();
             shuffle(begin(*blk), end(*blk), rng);
             InsertWarps((*blk)[0], (*blk)[1], sUsedWarps.back()); //A <-> sUsedWarps.back, B <-> sUsedWarps.back.newWarp
