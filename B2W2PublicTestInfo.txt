@@ -1,10 +1,10 @@
 Hey there! I've been sick for the past month and am unable to test the 
 thing I made to the extent I want, but I still wanna get it out ASAP
 
-Sooooo I'm releasing a version of the White 2 map rando to the public 
+Sooooo I'm releasing a version of the Black 2 and White 2 map rando to the public 
 so y'all can continue testing things for me! Not only do I have less work
 to do overall, but I can also work on adding more features
-and supporting Black 2, which is epic.
+and give me more time to work on other cool projects!
 
 Here's some critical information you'll need to know:
 
@@ -22,20 +22,18 @@ What I'm looking for is the following:
 *If you have any QoL suggestions, feel free to let me know!
 
 Some crucial information regarding the technical state of the rom:
--Currently, only English W2 versions of the rom can be randomized, 
- and only when the "Black City" password is NOT being used
+-Currently, only English and German versions of the rom can be randomized, 
+ and only when the "Black City/White Forest" password is NOT being used
  *If you don't speak English and are translating this via google, 
   if you want your language to be supported then I can very easily do that 
  (it's just some grunt work), just let me know via reporting it like a bug
 -Seeds and Seasons are indepenednt of one another- meaning the using the seed 
  "131432759" will give a different result during the spring and winter months
+*Seeds will not give the same randomization across Black 2 and White 2
 *Spring and Summer are considered the same in the logic, so each seed can 
  produce 3 different maps depending on the season
 *The option to randomize the season is also independent of the seed, 
  so basically share both the seed AND the season if you want to play with a friend
-
--While I have confirmed that there are "beatable" seeds, I haven't 
-had the time/energy to actually go through and beat a seed by myself
 
 -If N dies while following you that's fine, you'll still be able to
  battle him in his throne room and trigger Reshiram spawning in Dragonspiral

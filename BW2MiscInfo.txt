@@ -19,6 +19,8 @@ Changes Made:
 
 Flag Information:
 -Ghetsis will battle you in Kyurem's room after you talk to Hugh in Crater Forest while it is frozen
+-The Hiker blocking the way to Virbank will only move after you talk to Bianca in Aspertia after getting Badge 1, even though he says only the badge is required
+-The man in the PWT Gate will only move after you talk to Clay and Hugh in Driftveil after getting Badge 5, even though he says only the badge is required
 
 Some maps have multiple different map files, while others have different states.
 Those with map files will have ALL the versions of their map included.
