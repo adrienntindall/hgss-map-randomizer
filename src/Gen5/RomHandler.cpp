@@ -90,16 +90,18 @@ void UnpackRom(string romPath, string arm9) {
     
     unsigned char lang;
     
-    bin.seekp(0xE);
+    bin.seekp(0xE); //I don't know where the language flag actually is in this game so a random bit will have to work lol
     
     bin.read((char*) &lang, 2);
     
     switch(lang) {
-        case 62:
+        case 62: //W2
+        case 35: //B2
             cout << "English rom detected" << endl;
             langExt = "_english.csv";
             break;
-        case 227:
+        case 227: //W2
+        case 171: //B2
             cout << "Deutsche ROM erkannt" << endl;
             langExt = "_german.csv";
             break;

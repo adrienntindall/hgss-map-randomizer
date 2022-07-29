@@ -66,13 +66,13 @@ static int getSeason(string* seasonInput){
     }
 }
 
-static void HandleRandomization(string directory, string data, string arm9) {
+static void HandleRandomization(string directory, string data, string season_path) {
     generator = mt19937(time(NULL));
     srand(time(NULL));
     for(const auto & file : recursive_directory_iterator(directory)) {
         flag = true;
         string pstr = file.path().string();
-        UnpackRom(pstr, arm9);
+        UnpackRom(pstr, "");
         UnpackFieldNarc();
         string seedInput;
         string seasonInput;
@@ -115,7 +115,7 @@ static void HandleRandomization(string directory, string data, string arm9) {
             }
             ClearData();
         }
-        LockSeason(string(SEASON_LOCK_BASE_W2), season);
+        LockSeason(season_path, season);
         pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length()-4) + "_map_randomized";
         GenerateLogFile(OUT_PATH + pstr + ".log");
         SetWarps();
@@ -129,7 +129,9 @@ static void HandleRandomization(string directory, string data, string arm9) {
 int main() {
     ClearTempData();
     //W2
-    HandleRandomization(W2_PATH, W2_DATA, "");
+    HandleRandomization(W2_PATH, W2_DATA, string(SEASON_LOCK_BASE_W2));
+    //B2
+    HandleRandomization(B2_PATH, B2_DATA, string(SEASON_LOCK_BASE_B2));
     if(!flag) {
         cout << "No rom detected, please refer to HowToUse.txt" << endl;
     }
