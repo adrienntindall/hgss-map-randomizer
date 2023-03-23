@@ -1,0 +1,1 @@
+gcc -g main.c blz.c -o ../../tools/arm9dec.exe

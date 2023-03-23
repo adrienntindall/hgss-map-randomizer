@@ -5,7 +5,12 @@ temp/*
 data/*
 
 //Development tools
+.vscode
 *replace*
+
+//Linux/MacOS generated files (at compilation time)
+*.dSYM
+.DS_Store
 
 //=)
 files/bw2_changes/ow_sprites/*
