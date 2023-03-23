@@ -1,0 +1,1 @@
+ndstool can be installed with devkitPro pacman. Then use the script to copy it to the tools folder.

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 using std::filesystem::directory_iterator;
@@ -21,7 +22,7 @@ void ApplyChanges(string changesPath) {
     changesPath += langExt;
     
     fstream bin;
-    bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
+    bin.open("temp/arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
     
     ifstream changes;
     changes.open(changesPath);
@@ -46,7 +47,7 @@ void LockSeason(string changesPath, const char season) {
     changesPath += langExt;
     
     fstream bin;
-    bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
+    bin.open("temp/arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
     
     ifstream changes;
     changes.open(changesPath);
@@ -76,17 +77,17 @@ void LockSeason(string changesPath, const char season) {
 }
 
 void UnpackRom(string romPath, string arm9) {
-    string command = string(NDS_TOOL) + " -x \"" + romPath + "\" -9 temp\\arm9.bin -7 temp\\arm7.bin -y9 temp\\y9.bin -y7 temp\\y7.bin -d data -y temp\\overlay -t temp\\banner.bin -h temp\\header.bin";
+    string command = string(NDS_TOOL) + " -x \"" + romPath + "\" -9 temp/arm9.bin -7 temp/arm7.bin -y9 temp/y9.bin -y7 temp/y7.bin -d data -y temp/overlay -t temp/banner.bin -h temp/header.bin";
     cout << command << endl;
     system(command.c_str());
     
-    command = string(ARM9_DEC) + " -d temp\\arm9.bin";
+    command = string(ARM9_DEC) + " -d temp/arm9.bin";
     system(command.c_str());
     
     ApplyChanges(string(BW2_UNIVERSAL));
     
     fstream bin;
-    bin.open("temp\\arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
+    bin.open("temp/arm9.bin", ios::binary|ios::in|ios::out|ios::ate);
     
     unsigned char lang;
     
@@ -120,7 +121,7 @@ inline void CopyFiles(string narc_path, string temp_path, string data_path) {
     string command = string(KNARC) + " -d " + temp_path + " -u " + narc_path;
     system(command.c_str());
     
-    command = "copy " + string(data_path);
+    command = string(COPY_CMD) + " " + string(data_path);
     command += " " + temp_path;
     system(command.c_str());
     
@@ -133,22 +134,22 @@ void UnpackFieldNarc() {
     
     //Updating some select files:
     //Event Data
-    CopyFiles("data\\a\\1\\2\\6", "temp\\event_data", EVENT_DATA);
+    CopyFiles("data/a/1/2/6", "temp/event_data", EVENT_DATA);
     
     //Trainer Data
-    CopyFiles("data\\a\\0\\9\\1", "temp\\trainer_data", TRAINER_DATA);
+    CopyFiles("data/a/0/9/1", "temp/trainer_data", TRAINER_DATA);
 
     //Trainer Poke
-    CopyFiles("data\\a\\0\\9\\2", "temp\\trainer_poke", TRAINER_POKE);
+    CopyFiles("data/a/0/9/2", "temp/trainer_poke", TRAINER_POKE);
     
     //Map Scripts
-    CopyFiles("data\\a\\0\\5\\6", "temp\\map_script", MAP_FUNCTIONS);
+    CopyFiles("data/a/0/5/6", "temp/map_script", MAP_FUNCTIONS);
     
     //Map headers
-    string command = string(KNARC) + " -d temp\\map_header -u data\\a\\0\\1\\2";
+    string command = string(KNARC) + " -d temp/map_header -u data/a/0/1/2";
     system(command.c_str());
     
-    for(const auto & file : directory_iterator("temp\\map_header")) {
+    for(const auto & file : directory_iterator("temp/map_header")) {
         fstream bin;
         bin.open(file.path(), ios::binary|ios::in|ios::out|ios::ate);
         bin.seekg(0, ios::end);
@@ -171,22 +172,22 @@ void UnpackFieldNarc() {
         bin.close();
     }
     
-    command = string(KNARC) + " -d temp\\map_header -p data\\a\\0\\1\\2";
+    command = string(KNARC) + " -d temp/map_header -p data/a/0/1/2";
     system(command.c_str());
     
     //=)
-    CopyFiles("data\\a\\0\\4\\8", "temp\\ow_spr", OW_SPRITES);
+    CopyFiles("data/a/0/4/8", "temp/ow_spr", OW_SPRITES);
     system("echo on");
 }
 
 void PackFieldNarc() {
-    string command = string(KNARC) + " -d temp\\event_data -p data\\a\\1\\2\\6";
+    string command = string(KNARC) + " -d temp/event_data -p data/a/1/2/6";
     system(command.c_str());
 }
 
 void RepackRom(string output_name) {
     cout << output_name << endl;
-    string command = string(NDS_TOOL) + " -c " + "\"" + string(OUT_PATH) + output_name + "\"" + " -9 temp\\arm9.bin -7 temp\\arm7.bin -y9 temp\\y9.bin -y7 temp\\y7.bin -d data -y temp\\overlay -t temp\\banner.bin -h temp\\header.bin";
+    string command = string(NDS_TOOL) + " -c " + "\"" + string(OUT_PATH) + output_name + "\"" + " -9 temp/arm9.bin -7 temp/arm7.bin -y9 temp/y9.bin -y7 temp/y7.bin -d data -y temp/overlay -t temp/banner.bin -h temp/header.bin";
     system(command.c_str());
 }
 

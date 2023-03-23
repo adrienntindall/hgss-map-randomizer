@@ -1,0 +1,1 @@
+gcc -g blz.c -o ../../tools/blz.exe

@@ -116,7 +116,7 @@ static void HandleRandomization(string directory, string data, string season_pat
             ClearData();
         }
         LockSeason(season_path, season);
-        pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length()-4) + "_map_randomized";
+        pstr = pstr.substr(pstr.find_last_of("/") + 1, pstr.length()-4) + "_map_randomized";
         GenerateLogFile(OUT_PATH + pstr + ".log");
         SetWarps();
         PackFieldNarc();

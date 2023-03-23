@@ -1,0 +1,1 @@
+g++ -std=c++17 -Wno-narrowing -g Narc.cpp Source.cpp -o ../../tools/knarc.exe

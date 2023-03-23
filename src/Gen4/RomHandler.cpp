@@ -16,18 +16,18 @@ inline string csvGetNext(string str) {
 }
 
 void UnpackRom(string romPath, string arm9) {
-    string command = string(NDS_TOOL) + " -x \"" + romPath + "\" -9 temp\\arm9.bin -7 temp\\arm7.bin -y9 temp\\y9.bin -y7 temp\\y7.bin -d data -y temp\\overlay -t temp\\banner.bin -h temp\\header.bin";
+    string command = string(NDS_TOOL) + " -x \"" + romPath + "\" -9 temp/arm9.bin -7 temp/arm7.bin -y9 temp/y9.bin -y7 temp/y7.bin -d data -y temp/overlay -t temp/banner.bin -h temp/header.bin";
     cout << command << endl;
     system(command.c_str());
     
     //Updating some of the files...
     
-    command = string(ARM9_DEC) + " temp\\arm9.bin " + " temp\\arm9_.bin";
+    command = string(ARM9_DEC) + " temp/arm9.bin " + " temp/arm9_.bin";
     
     system(command.c_str());
     
     fstream bin;
-    bin.open("temp\\arm9_.bin", ios::binary|ios::in|ios::out|ios::ate);
+    bin.open("temp/arm9_.bin", ios::binary|ios::in|ios::out|ios::ate);
     
     unsigned char lang = 2;
     
@@ -83,33 +83,33 @@ void UnpackRom(string romPath, string arm9) {
     changes.close();
     bin.close();
     
-    command = "copy files\\scr_seq.narc data\\a\\0\\1\\2";
+    command = string(COPY_CMD) + " files/scr_seq.narc data/a/0/1/2";
     system(command.c_str());
     
 }
 
 void UnpackFieldNarc() {
-    string command = string(KNARC) + " -d temp\\event_data -u data\\a\\0\\3\\2";
+    string command = string(KNARC) + " -d temp/event_data -u data/a/0/3/2";
     system(command.c_str());
     
     //Updating some select files:
     for(const auto & file : directory_iterator(EVENT_DATA)) {
         string pstr = file.path().string();
-        command = "copy " + file.path().string();
-        pstr = pstr.substr(pstr.find_last_of("\\") + 1, pstr.length());
-        command += " temp\\event_data\\" + pstr;
+        command = string(COPY_CMD) + " " + file.path().string();
+        pstr = pstr.substr(pstr.find_last_of("/") + 1, pstr.length());
+        command += " temp/event_data/" + pstr;
         system(command.c_str());
     }
 }
 
 void PackFieldNarc() {
-    string command = string(KNARC) + " -d temp\\event_data -p data\\a\\0\\3\\2";
+    string command = string(KNARC) + " -d temp/event_data -p data/a/0/3/2";
     system(command.c_str());
 }
 
 void RepackRom(string output_name) {
     cout << output_name << endl;
-    string command = string(NDS_TOOL) + " -c " + "\"" + string(OUT_PATH) + output_name + "\"" + " -9 temp\\arm9_.bin -7 temp\\arm7.bin -y9 temp\\y9.bin -y7 temp\\y7.bin -d data -y temp\\overlay -t temp\\banner.bin -h temp\\header.bin";
+    string command = string(NDS_TOOL) + " -c " + "\"" + string(OUT_PATH) + output_name + "\"" + " -9 temp/arm9_.bin -7 temp/arm7.bin -y9 temp/y9.bin -y7 temp/y7.bin -d data -y temp/overlay -t temp/banner.bin -h temp/header.bin";
     system(command.c_str());
 }
 
