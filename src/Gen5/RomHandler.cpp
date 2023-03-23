@@ -2,6 +2,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 using std::filesystem::directory_iterator;
@@ -120,7 +121,7 @@ inline void CopyFiles(string narc_path, string temp_path, string data_path) {
     string command = string(KNARC) + " -d " + temp_path + " -u " + narc_path;
     system(command.c_str());
     
-    command = "copy " + string(data_path);
+    command = string(COPY_CMD) + " " + string(data_path);
     command += " " + temp_path;
     system(command.c_str());
     

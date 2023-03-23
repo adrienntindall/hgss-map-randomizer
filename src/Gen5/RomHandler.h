@@ -24,6 +24,12 @@ using std::string;
 #define OW_SPRITES   "files/bw2_changes/ow_sprites"
 #define MUGSHOTS     "files/bw2_changes/mugshots"
 
+#ifdef __CYGWIN__
+#define COPY_CMD    "copy"
+#else
+#define COPY_CMD    "cp -r"
+#endif
+
 //Season consts
 enum Seasons {
     SEASON_SPRING,
